@@ -3,16 +3,24 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 
-dotenv.config(); 
+import juegoRoutes from "./routes/juegoRoutes.js";
+import resenaRoutes from "./routes/resenaRoutes.js";
+
+dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Ruta base para comprobar que el servidor funciona
 app.get("/", (req, res) => {
   res.send("Servidor backend funcionando correctamente.");
 });
+
+// Rutas principales
+app.use("/api/juegos", juegoRoutes);
+app.use("/api/resenas", resenaRoutes);
 
 // Conexión a la base de datos MongoDB
 mongoose
