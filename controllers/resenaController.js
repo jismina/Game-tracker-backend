@@ -1,5 +1,5 @@
-// backend/controllers/resenaController.js
 import Resena from "../models/resena.js";
+import mongoose from "mongoose";
 
 // Obtener todas las reseñas
 export const obtenerResenas = async (req, res) => {
@@ -16,16 +16,24 @@ export const obtenerResenas = async (req, res) => {
 export const crearResena = async (req, res) => {
   try {
     const { juegoId, texto, puntuacion } = req.body;
+    console.log("Datos recibidos:", req.body);
     if (!juegoId || !texto || puntuacion === undefined) {
       return res.status(400).json({ mensaje: "Campos obligatorios: juegoId, texto, puntuacion" });
     }
 
-    const nueva = new Resena(req.body);
+    // Asegurar que puntuacion sea número válido entre 1 y 5
+    const puntuacionNum = Number(puntuacion);
+    if (Number.isNaN(puntuacionNum) || puntuacionNum < 1 || puntuacionNum > 5) {
+      return res.status(400).json({ mensaje: "puntuacion debe ser un número entre 1 y 5" });
+    }
+
+    const nueva = new Resena({ juegoId, texto, puntuacion: puntuacionNum });
     await nueva.save();
     return res.status(201).json(nueva);
   } catch (error) {
     console.error("Error crearResena:", error);
-    return res.status(400).json({ mensaje: "Error al crear la reseña" });
+    // En desarrollo devolvemos el mensaje de error para facilitar debug
+    return res.status(500).json({ mensaje: "Error al crear la reseña", error: error.message });
   }
 };
 
@@ -52,5 +60,28 @@ export const eliminarResena = async (req, res) => {
   } catch (error) {
     console.error("Error eliminarResena:", error);
     return res.status(400).json({ mensaje: "Error al eliminar la reseña" });
+  }
+};
+
+// Obtener estadísticas de reseñas
+export const obtenerEstadisticas = async (req, res) => {
+  try {
+    const totalResenas = await Resena.countDocuments();
+    const promedioCalificacion = await Resena.aggregate([
+      {
+        $group: {
+          _id: null,
+          promedio: { $avg: "$puntuacion" }
+        }
+      }
+    ]);
+
+    return res.json({
+      totalResenas,
+      promedioCalificacion: promedioCalificacion[0]?.promedio || 0
+    });
+  } catch (error) {
+    console.error("Error obtenerEstadisticas:", error);
+    return res.status(500).json({ mensaje: "Error al obtener las estadísticas" });
   }
 };

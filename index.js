@@ -10,10 +10,14 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+// ✅ Configuración de CORS (importante para conectar con el frontend)
+app.use(cors({
+  origin: "http://localhost:5173", // permite peticiones desde tu frontend
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
+
 app.use(express.json());
 
-// Ruta base para comprobar que el servidor funciona
 app.get("/", (req, res) => {
   res.send("Servidor backend funcionando correctamente.");
 });
