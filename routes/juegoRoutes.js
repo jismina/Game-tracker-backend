@@ -1,6 +1,7 @@
 import express from "express";
 import {
   obtenerJuegos,
+  obtenerJuegoPorId,
   crearJuego,
   actualizarJuego,
   eliminarJuego,
@@ -9,6 +10,7 @@ import {
 const router = express.Router();
 
 router.get("/", obtenerJuegos);
+router.get("/:id", obtenerJuegoPorId);
 router.post("/", crearJuego);
 router.put("/:id", actualizarJuego);
 router.delete("/:id", eliminarJuego);

@@ -1,21 +1,22 @@
 import mongoose from "mongoose";
 
 const juegoSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId, required: true },
-  titulo: { type: String, required: true },
-  genero: { type: String, required: true },
-  plataforma: { type: String, required: true },
-  añoLanzamiento: { type: Number },
-  desarrollador: { type: String },
-  descripcion: { type: String },
-  horasJugadas: { type: Number, default: 0 },
+  titulo: { type: String, required: true, trim: true },
+  genero: { type: String, required: true, trim: true },
+  plataforma: { type: String, required: true, trim: true },
+  añoLanzamiento: { 
+    type: Number,
+    min: 1950,
+    max: new Date().getFullYear() + 5
+  },
+  desarrollador: { type: String, trim: true },
+  descripcion: { type: String, trim: true },
+  horasJugadas: { type: Number, default: 0, min: 0 },
   completado: { type: Boolean, default: false },
-  fechaCompletado: { type: Date },
-  puntuacion: { type: Number, min: 0, max: 5 },
-  imagenPortada: { type: String, default: "" }
-
+  imagenPortada: { type: String, default: "", trim: true }
 }, {
-  timestamps: true // agrega automáticamente createdAt y updatedAt
+  timestamps: true, // agrega automáticamente createdAt y updatedAt
+  versionKey: false // elimina el campo __v
 });
 
 const Juego = mongoose.model("Juego", juegoSchema);

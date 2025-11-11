@@ -10,9 +10,8 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Configuración de CORS (importante para conectar con el frontend)
 app.use(cors({
-  origin: "http://localhost:5173", // permite peticiones desde tu frontend
+  origin: ["http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE"],
 }));
 
@@ -22,13 +21,11 @@ app.get("/", (req, res) => {
   res.send("Servidor backend funcionando correctamente.");
 });
 
-// Rutas principales
 app.use("/api/juegos", juegoRoutes);
 app.use("/api/resenas", resenaRoutes);
 
-// Conexión a la base de datos MongoDB
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/game-tracker")
+  .connect(process.env.MONGO_URI || "mongodb+srv://jacobogarcesoquendo:aFJzVMGN3o7fA38A@cluster0.mqwbn.mongodb.net/MilenaAnahiAlacheEcheverria")
   .then(() => console.log("✅ Conectado a MongoDB"))
   .catch((error) => console.error("❌ Error al conectar con MongoDB:", error));
 
